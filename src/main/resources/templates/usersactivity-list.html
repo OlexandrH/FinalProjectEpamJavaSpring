@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Activities List</title>
+</head>
+<body>
+<div>
+    <a th:href = "@{/logout}">Logout</a>
+    <a th:href = "@{/admin/user/list}">Users</a>
+    <a th:href = "@{/admin/category/list}">Categories</a>
+    <a th:href = "@{/admin/activity/list}">Activities</a>
+</div>
+<h4>
+    Activities of user
+</h4>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Time
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each = "users_act : ${usersActivities}">
+            <td th:text = "${users_act.id}"></td>
+            <td th:text = "${users_act.activityName}"></td>
+            <td th:text = "${users_act.categoryName}"></td>
+
+            <td>
+                <label><span th:text="${users_act.timeHours}"></span></label>
+                <label> h </label>
+                <label><span th:text="${users_act.timeMin}"></span></label>
+                <label> m </label>
+            </td>
+
+            <td th:text="${users_act.status}">
+            </td>
+            <td>
+                <form th:action = "@{/admin/usersactivity/accept/{id} (id=${users_act.id})}" method="post" style="display: inline;">
+                    <button type="submit">Accept</button>
+                </form>
+                <form th:action = "@{/admin/usersactivity/delete/{id} (id=${users_act.id})}" method="post" style="display: inline;">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

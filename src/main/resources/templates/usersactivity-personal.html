@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>My page</title>
+</head>
+<body>
+<div>
+    <a th:href = "@{/logout}">Logout</a>
+</div>
+<br>
+<div>
+    My data<br>
+    <label style="display: inline-block; width: 80px;">Login:</label><span th:text="${user.getLogin}"></span><br>
+    <label style="display: inline-block; width: 80px;">Name:</label><span th:text="${user.getName}"></span><br>
+    <a th:href = "@{/personal/user/edit}">Edit</a>
+</div>
+<br>
+<div>
+    My activities
+    <table>
+        <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Time
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each = "users_act : ${usersActivities}">
+            <td th:text = "${users_act.id}"></td>
+            <td th:text = "${users_act.activityName}"></td>
+            <td th:text = "${users_act.categoryName}"></td>
+
+            <td>
+                <label><span th:text="${users_act.timeHours}"></span></label>
+                <label> h </label>
+                <label><span th:text="${users_act.timeMin}"></span></label>
+                <label> m </label>
+            </td>
+
+            <td th:text="${users_act.status}">
+            </td>
+            <td>
+                <form th:action = "@{/personal/usersactivity/unbook/{id} (id=${users_act.id})}" method="post" style="display: inline;">
+                    <button type="submit">Unbook</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<br>
+<br>
+
+<form th:action = "@{/personal/usersactivity/add/}"   method="post">
+
+    <select name = "activityId" required>
+        <option value="0" disabled selected hidden>Select activity</option>
+        <option th:each = "act : ${activities}" th:value="${act.id}"><span th:text = "${act.name}"></span>(<span th:text="${act.category.name}"></span>)</option>
+    </select>
+
+    <input type = "number" min="0" max="23" value="0" size="2" name="timeHours"/>
+    <label> h </label>
+    <input type = "number" min = "0" max="55" value="5" step="5" size="2" name ="timeMin"/>
+    <label> m </label>
+
+    <button type="submit">Add</button>
+</form>
+
+</body>
+</html>

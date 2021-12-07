@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Edit My Data</title>
+</head>
+<body>
+    <div>
+        <a th:href = "@{/logout}">Logout</a>
+        <a th:href = "@{/personal/usersactivity/list}">Back</a>
+    </div>
+
+
+
+    <div>
+
+        <form th:action="@{/personal/user/edit/{id} (id=${user.id})}" th:object="${user}" method="post">
+            <label>ID</label>:&nbsp;<label th:text="${user.id}"></label>
+            <br>
+            <label>Login</label>:&nbsp;<label th:text="${user.login}"></label>
+            <br>
+            <label>Password</label>:
+            <input th:field = "*{password}" type="text" minlength="3" maxlength="30" required/> <!-- add pattern -->
+            <br>
+            <label>Name</label>:
+            <input th:field="*{name}" type = "text" minlength="3" maxlength="30" required/> <!-- add pattern -->
+            <br>
+
+            <button type="submit">Save</button>
+            <button type="reset">Restore</button>
+        </form>
+        <table>
+
+        </table>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Category List</title>
+</head>
+<body>
+<div>
+    <a th:href = "@{/logout}">Logout</a>
+    <a th:href = "@{/admin/user/list}">Users</a>
+    <a th:href = "@{/admin/category/list}">Categories</a>
+    <a th:href = "@{/admin/activity/list}">Activities</a>
+</div>
+
+
+
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Activities
+            </th>
+            <th>
+                Edit
+            </th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each = "cat : ${categories}">
+            <td th:text = "${cat.id}"></td>
+            <td th:text = "${cat.name}"></td>
+            <td>
+                <!-- <a th:href = "@{/activity/list/{cat_id} (cat_id=${cat.id})}">Show</a> -->
+            </td>
+            <td>
+                <form th:action = "@{/admin/category/edit/{id} (id=${cat.id})}" method="post" th:object="${category}" style="display: inline;">
+                    <input type = "text" name="name" th:value="${cat.name}"  minlength="2" maxlength="30" required/> <!-- add pattern -->
+                    <button type="submit">Save</button>&nbsp;
+                    <button type="reset">Restore</button>
+                </form>
+            </td>
+            <td>
+                <form th:action = "@{/admin/category/delete/{id} (id=${cat.id})}" method="post" placeholder="Category name" style="display: inline;">
+                    &nbsp;<button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<br>
+<br>
+Add:
+<form th:action = "@{/admin/category/add}" th:object="${category}" method="post">
+    <input type="text" th:field="*{name}" minlength="3" maxlength="30" required/>
+    <button type="submit">Save</button>
+</form>
+</body>
+</html>

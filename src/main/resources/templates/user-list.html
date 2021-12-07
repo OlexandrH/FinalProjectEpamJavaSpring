@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>User List</title>
+</head>
+<body>
+    <div>
+        <a th:href = "@{/logout}">Logout</a>
+        <a th:href = "@{/admin/user/list}">Users</a>
+        <a th:href = "@{/admin/category/list}">Categories</a>
+        <a th:href = "@{/admin/activity/list}">Activities</a>
+
+    </div>
+
+
+
+    <div>
+        <table>
+            <thead>
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Login
+                </th>
+                <th>
+                    Name
+                </th>
+                <th>
+                    Role
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each = "user : ${users}">
+                <td th:text = "${user.id}"></td>
+                <td th:text = "${user.login}"></td>
+                <td th:text = "${user.name}"></td>
+                <td th:text = "${user.role}"></td>
+                <td>
+                    <form th:action = "@{/admin/user/edit/{id} (id=${user.id})}" method="get" style="display: inline;">
+                        <button type="submit">Edit</button>&nbsp;
+                    </form>
+                </td>
+                <td>
+                    <form th:action = "@{/admin/user/delete/{id} (id=${user.id})}" method="post" style="display: inline;">
+                        <button type="submit">Delete</button>
+                    </form>
+                    <a th:href = "@{/admin/usersactivity/list/{id} (id=${user.id})}">Show activities </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <!-- <a th:href = "@{/user/add}">New user</a> -->
+</body>
+</html>

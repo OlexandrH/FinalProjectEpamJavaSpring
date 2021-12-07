@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Activity List</title>
+</head>
+<body>
+<div>
+    <a th:href = "@{/logout}">Logout</a>
+    <a th:href = "@{/admin/user/list}">Users</a>
+    <a th:href = "@{/admin/category/list}">Categories</a>
+    <a th:href = "@{/admin/activity/list}">Activities</a>
+</div>
+
+
+
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>
+                ID
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Edit
+            </th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each = "act : ${activities}">
+            <td th:text = "${act.id}"></td>
+            <td th:text = "${act.name}"></td>
+            <td th:text = "${act.category.name}"></td>
+
+            <td>
+                <form th:action = "@{/admin/activity/edit/{id} (id=${act.id})}" method="post" th:object="${activityDTO}" style="display: inline;">
+                    <input type = "text" name="name" th:value="${act.name}"  minlength="2" maxlength="30" required/> <!-- add pattern -->
+
+                    <select name = "categoryId" required>
+                        <option th:each = "cat : ${categories}" th:value="${cat.id}" th:selected="${act.category.id == cat.id}"><span th:text = "${cat.name}"></span></option>
+                    </select>
+
+
+                    <button type="submit">Save</button>&nbsp;
+                    <button type="reset">Restore</button>
+                </form>
+            </td>
+            <td>
+                <form th:action = "@{/admin/activity/delete/{id} (id=${act.id})}" method="post" placeholder="Activity name" style="display: inline;">
+                    &nbsp;<button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<br>
+<br>
+Add:
+<form th:action = "@{/admin/activity/add}" th:object="${activityDTO}"  method="post">
+    <input type="text" th:field="*{name}" placeholder="Activity name" minlength="3" maxlength="30" required/>
+    <select th:field="*{categoryId}" required>
+        <option value="0" disabled selected hidden>Select category</option>
+        <option th:each = "cat : ${categories}" th:value="${cat.id}"><span th:text = "${cat.name}"></span></option>
+    </select>
+    <button type="submit">Save</button>
+</form>
+</body>
+</html>
