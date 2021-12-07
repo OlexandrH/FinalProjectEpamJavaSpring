@@ -17,7 +17,7 @@ public class User {
     @Column(name="login", updatable = false , unique = true, nullable = false, length = 32)
     private String login;
 
-    @Column(name="pass", nullable = false, length = 32)
+    @Column(name="pass", nullable = false, length = 32)//64!
     private String password;
 
     @Column(name="name", nullable = false, length = 32)

@@ -10,7 +10,7 @@
         <a th:href = "@{/admin/user/list}">Users</a>
         <a th:href = "@{/admin/category/list}">Categories</a>
         <a th:href = "@{/admin/activity/list}">Activities</a>
-
+        <a th:href = "@{/admin/activity/stat}">Activities of Users</a>
     </div>
 
 
@@ -20,19 +20,25 @@
             <thead>
             <tr>
                 <th>
+                    <a th:href ="@{'/admin/user/list/page/' + ${currentPage} + '?sortBy=id&sortOrder=' + ${sortReverse}}">
                     ID
+                    </a>
                 </th>
                 <th>
+                    <a th:href ="@{'/admin/user/list/page/' + ${currentPage} + '?sortBy=login&sortOrder=' + ${sortReverse}}">
                     Login
+                    </a>
                 </th>
                 <th>
+                    <a th:href ="@{'/admin/user/list/page/' + ${currentPage} + '?sortBy=name&sortOrder=' + ${sortReverse}}">
                     Name
+                    </a>
                 </th>
                 <th>
                     Role
                 </th>
                 <th>
-                    Actions
+
                 </th>
             </tr>
             </thead>
@@ -57,6 +63,11 @@
             </tbody>
         </table>
     </div>
-    <!-- <a th:href = "@{/user/add}">New user</a> -->
+    <div th:if = "${totalPages > 1}">
+        <span th:each = "i: ${#numbers.sequence(1, totalPages)}">
+            <a th:if = "${currentPage != i}" th:href="@{'/admin/user/list/page/' + ${i} + '?sortBy=' + ${sortBy} + '&sortOrder=' + ${sortOrder}}">[[${i}]]</a>
+            <span th:unless="${currentPage != i}">[[${i}]]</span> &nbsp;&nbsp;
+        </span>
+    </div>
 </body>
 </html>

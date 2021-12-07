@@ -15,13 +15,13 @@
 
         <form th:action="@{/add}" th:object="${user}" method="post">
             <label>Login</label>:
-            <input name="login" th:field= "*{login}" type = "text" minlength="3" maxlength="30" placeholder="Login" required/> <!-- add pattern -->
+            <input name="login" th:field= "*{login}" type = "text" minlength="3" maxlength="30" placeholder="Login" pattern="[_0-9A-Za-z]{3,30}" required/>
             <br>
             <label>Password</label>:
-            <input name="password" th:field= "*{password}" type = "text" minlength="3" maxlength="30" placeholder="Password" required/> <!-- add pattern -->
+            <input name="password" th:field= "*{password}" type = "text" minlength="3" maxlength="30" placeholder="Password" pattern="[_0-9A-Za-z]{3,30}" required/>
             <br>
             <label>Name</label>:
-            <input name = "name" th:field="*{name}" type = "text" minlength="3" maxlength="30" placeholder="Name" required/> <!-- add pattern -->
+            <input name = "name" th:field="*{name}" type = "text" minlength="3" maxlength="30" placeholder="Name" pattern="[_.0-9A-Za-zА-Яа-яҐґІіЇіЄє\s]{2,30}" required/>
             <br>
             <button type="submit">Save</button>
         </form>

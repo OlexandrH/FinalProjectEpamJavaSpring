@@ -1,6 +1,7 @@
 package ua.oblikchasu.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -8,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 import ua.oblikchasu.model.User;
 import ua.oblikchasu.security.UserDetailsImpl;
 import ua.oblikchasu.service.UserService;
+
+import java.util.List;
 import java.util.Optional;
 
 
@@ -22,8 +25,9 @@ public class UserController {
 
     @GetMapping("admin/user/list")
     public String getAll (Model model) {
-        model.addAttribute("users", userService.getAll());
-        return "user-list";
+        //model.addAttribute("users", userService.getAll());
+        //return "user-list";
+        return getPaginated(1, "id", "asc", model);
     }
 
     @GetMapping("/add")
@@ -97,4 +101,26 @@ public class UserController {
         return "redirect:/personal/usersactivity/list";
     }
 
+    @GetMapping("/admin/user/list/page/{pageNo}")
+    public String getPaginated (
+            @PathVariable (value = "pageNo") int pageNo,
+            @RequestParam ("sortBy") String sortBy,
+            @RequestParam ("sortOrder") String sortOrder,
+            Model model) {
+        int pageSize = 5;
+        Page<User> userPage = userService.getPaginated(pageNo, pageSize, sortBy, sortOrder);
+        List<User> users = userPage.getContent();
+
+        model.addAttribute("currentPage", pageNo);
+        model.addAttribute("totalPages", userPage.getTotalPages());
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortOrder", sortOrder);
+        if(sortOrder.equals("asc")) {
+            model.addAttribute("sortReverse", "desc");
+        } else {
+            model.addAttribute("sortReverse", "asc");
+        }
+        model.addAttribute("users", users);
+        return "user-list";
+    }
 }

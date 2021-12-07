@@ -1,6 +1,7 @@
 package ua.oblikchasu.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,14 +41,40 @@ public class UsersActivityController {
 
     @GetMapping("/admin/usersactivity/list/{id}")
     public String getByUser(@PathVariable int id, Model model) {
-        List<UsersActivity> userActivities = usersActivityService.getForUser(id);
+        return getByUserSorted(id, 1, "id", "desc", model);
+    }
+
+    @GetMapping("/admin/usersactivity/list/{id}/page/{pageNo}")
+    public String getByUserSorted(
+            @PathVariable (value="id")int id,
+            @PathVariable (value="pageNo") int pageNo,
+            @RequestParam ("sortBy") String sortBy,
+            @RequestParam ("sortOrder") String sortOrder,
+            Model model) {
+        int pageSize = 5;
+        Page<UsersActivity> usersActivityPage = usersActivityService.getPaginated(id, pageNo, pageSize, sortBy, sortOrder);
+        List<UsersActivity> userActivities = usersActivityPage.getContent();
         List<UsersActivityDTO> usersActivityDTOList = new LinkedList<>();
         for(UsersActivity a: userActivities) {
             usersActivityDTOList.add(convertToUsersActivityDTO(a));
         }
+
+        model.addAttribute("currentPage", pageNo);
+        model.addAttribute("totalPages", usersActivityPage.getTotalPages());
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortOrder", sortOrder);
+
+        if(sortOrder.equals("asc")) {
+            model.addAttribute("sortReverse", "desc");
+        } else {
+            model.addAttribute("sortReverse", "asc");
+        }
+
+        model.addAttribute("userId", id);
         model.addAttribute("usersActivities", usersActivityDTOList);
         return "usersactivity-list";
     }
+
 
     @PostMapping("/admin/usersactivity/delete/{id}")
     public String delete (@PathVariable int id, Model model) {
@@ -75,8 +102,8 @@ public class UsersActivityController {
         return "redirect:/error";
     }
 
-    @GetMapping("/personal/usersactivity/list")
-    public String getPersonalActivities(Model model) {
+    @GetMapping("/personal/usersactivity/all")
+    public String getAllPersonalActivities(Model model) {
         UserDetailsImpl userDetails = (UserDetailsImpl)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User user = userDetails.getUser();
         int id = user.getId();
@@ -96,6 +123,53 @@ public class UsersActivityController {
         model.addAttribute("usersActivities", usersActivityDTOList);
         return "usersactivity-personal";
     }
+
+    @GetMapping("/personal/usersactivity/list")
+    public String getPersonalActivitiesDefault (Model model) {
+        return getPersonalActivities(1, "id", "desc", model);
+    }
+
+    @GetMapping("/personal/usersactivity/list/page/{pageNo}")
+    public String getPersonalActivities(
+            @PathVariable (value="pageNo") int pageNo,
+            @RequestParam ("sortBy") String sortBy,
+            @RequestParam ("sortOrder") String sortOrder,
+            Model model) {
+        UserDetailsImpl userDetails = (UserDetailsImpl)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userDetails.getUser();
+        int id = user.getId();
+        Optional<User> opt = userService.getById(user.getId());
+        if (opt.isEmpty()) {
+            return "redirect:/error";
+        }
+        user = opt.get();
+        int pageSize = 5;
+        Page<UsersActivity> usersActivityPage = usersActivityService.getPaginated(id, pageNo, pageSize, sortBy, sortOrder);
+        List<UsersActivity> userActivities = usersActivityPage.getContent();
+        List<UsersActivityDTO> usersActivityDTOList = new LinkedList<>();
+        for(UsersActivity a: userActivities) {
+            usersActivityDTOList.add(convertToUsersActivityDTO(a));
+        }
+
+        List<Activity> activities = activityService.getAll();
+        model.addAttribute("currentPage", pageNo);
+        model.addAttribute("totalPages", usersActivityPage.getTotalPages());
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortOrder", sortOrder);
+
+        if(sortOrder.equals("asc")) {
+            model.addAttribute("sortReverse", "desc");
+        } else {
+            model.addAttribute("sortReverse", "asc");
+        }
+
+        model.addAttribute("user", user);
+        model.addAttribute("activities", activities);
+        model.addAttribute("usersActivities", usersActivityDTOList);
+
+        return "usersactivity-personal";
+    }
+
 
     @PostMapping("/personal/usersactivity/unbook/{id}")
     public String unbook (@PathVariable int id, Model model) {
@@ -126,6 +200,7 @@ public class UsersActivityController {
         return "redirect:/error";
     }
 
+
     public Optional<UsersActivity> convertToUsersActivity(UsersActivityDTO usersActivityDTO) {
         Optional<Activity> optActivity = activityService.getById(usersActivityDTO.getActivityId());
         Optional<User> optUser = userService.getById(usersActivityDTO.getUserId());
@@ -147,5 +222,6 @@ public class UsersActivityController {
                 usersActivity.getStatus()
         );
     }
+
 
 }

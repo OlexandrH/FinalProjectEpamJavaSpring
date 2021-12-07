@@ -22,19 +22,29 @@
         <thead>
         <tr>
             <th>
+                <a th:href ="@{'/personal/usersactivity/list/page/' + ${currentPage} + '?sortBy=time&sortOrder=' + ${sortReverse}}">
                 ID
+                </a>
             </th>
             <th>
+                <a th:href ="@{'/personal/usersactivity/list/page/' + ${currentPage} + '?sortBy=time&sortOrder=' + ${sortReverse}}">
                 Name
+                </a>
             </th>
             <th>
+                <a th:href ="@{'/personal/usersactivity/list/page/' + ${currentPage} + '?sortBy=time&sortOrder=' + ${sortReverse}}">
                 Category
+                </a>
             </th>
             <th>
+                <a th:href ="@{'/personal/usersactivity/list/page/' + ${currentPage} + '?sortBy=time&sortOrder=' + ${sortReverse}}">
                 Time
+                </a>
             </th>
             <th>
+                <a th:href ="@{'/personal/usersactivity/list/page/' + ${currentPage} + '?sortBy=time&sortOrder=' + ${sortReverse}}">
                 Status
+                </a>
             </th>
             <th>
             </th>
@@ -64,9 +74,16 @@
         </tbody>
     </table>
 </div>
+<div th:if = "${totalPages > 1}">
+    <span th:each = "i: ${#numbers.sequence(1, totalPages)}">
+        <a th:if = "${currentPage != i}" th:href="@{'/personal/usersactivity/list/page/' + ${i} + '?sortBy=' + ${sortBy} + '&sortOrder=' + ${sortOrder}}">[[${i}]]</a>
+        <span th:unless="${currentPage != i}">[[${i}]]</span>
+    </span>
+</div>
 <br>
 <br>
 
+Add:
 <form th:action = "@{/personal/usersactivity/add/}"   method="post">
 
     <select name = "activityId" required>

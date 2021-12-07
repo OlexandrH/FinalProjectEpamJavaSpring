@@ -10,6 +10,7 @@
     <a th:href = "@{/admin/user/list}">Users</a>
     <a th:href = "@{/admin/category/list}">Categories</a>
     <a th:href = "@{/admin/activity/list}">Activities</a>
+    <a th:href = "@{/admin/activity/stat}">Activities of Users</a>
 </div>
 
 
@@ -19,13 +20,17 @@
         <thead>
         <tr>
             <th>
+                <a th:href ="@{'/admin/category/list/page/' + ${currentPage} + '?sortBy=id&sortOrder=' + ${sortReverse}}">
                 ID
+                </a>
             </th>
             <th>
+                <a th:href ="@{'/admin/category/list/page/' + ${currentPage} + '?sortBy=name&sortOrder=' + ${sortReverse}}">
                 Name
+                </a>
             </th>
             <th>
-                Activities
+
             </th>
             <th>
                 Edit
@@ -38,17 +43,16 @@
             <td th:text = "${cat.id}"></td>
             <td th:text = "${cat.name}"></td>
             <td>
-                <!-- <a th:href = "@{/activity/list/{cat_id} (cat_id=${cat.id})}">Show</a> -->
             </td>
             <td>
                 <form th:action = "@{/admin/category/edit/{id} (id=${cat.id})}" method="post" th:object="${category}" style="display: inline;">
-                    <input type = "text" name="name" th:value="${cat.name}"  minlength="2" maxlength="30" required/> <!-- add pattern -->
+                    <input type = "text" name="name" th:value="${cat.name}"  minlength="2" maxlength="30" pattern="[.0-9A-Za-zА-Яа-яҐґІіЇіЄє\s]{3,30}" required/>
                     <button type="submit">Save</button>&nbsp;
                     <button type="reset">Restore</button>
                 </form>
             </td>
             <td>
-                <form th:action = "@{/admin/category/delete/{id} (id=${cat.id})}" method="post" placeholder="Category name" style="display: inline;">
+                <form th:action = "@{/admin/category/delete/{id} (id=${cat.id})}" method="post" style="display: inline;">
                     &nbsp;<button type="submit">Delete</button>
                 </form>
             </td>
@@ -56,11 +60,17 @@
         </tbody>
     </table>
 </div>
+<div th:if = "${totalPages > 1}">
+        <span th:each = "i: ${#numbers.sequence(1, totalPages)}">
+            <a th:if = "${currentPage != i}" th:href="@{'/admin/category/list/page/' + ${i} + '?sortBy=' + ${sortBy} + '&sortOrder=' + ${sortOrder}}">[[${i}]]</a>
+            <span th:unless="${currentPage != i}">[[${i}]]</span> &nbsp;&nbsp;
+        </span>
+</div>
 <br>
 <br>
 Add:
 <form th:action = "@{/admin/category/add}" th:object="${category}" method="post">
-    <input type="text" th:field="*{name}" minlength="3" maxlength="30" required/>
+    <input type="text" th:field="*{name}" placeholder="Activity name" minlength="3" maxlength="30" pattern="[.0-9A-Za-zА-Яа-яҐґІіЇіЄє\s]{3,30}" required/>
     <button type="submit">Save</button>
 </form>
 </body>

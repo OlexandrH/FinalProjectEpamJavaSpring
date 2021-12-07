@@ -1,6 +1,7 @@
 package ua.oblikchasu.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -10,6 +11,8 @@ import ua.oblikchasu.model.Category;
 import ua.oblikchasu.service.ActivityService;
 import ua.oblikchasu.service.CategoryService;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 @RequestMapping("/admin/activity")
@@ -25,14 +28,25 @@ public class ActivityController {
         this.categoryService = categoryService;
     }
 
-    @GetMapping("/list")
-    public String getAll (Model model)
+    @GetMapping("/all")
+    public String getNonPaginated (Model model)
     {
         model.addAttribute("activities", activityService.getAll());
         ActivityDTO activityDTO = new ActivityDTO(0);
         model.addAttribute("activityDTO", activityDTO);
         model.addAttribute("categories", categoryService.getAll());
         return "activity-list";
+    }
+
+    @GetMapping("/list")
+    public String getAll (Model model)
+    {
+        //model.addAttribute("activities", activityService.getAll());
+        //ActivityDTO activityDTO = new ActivityDTO(0);
+        //model.addAttribute("activityDTO", activityDTO);
+        //model.addAttribute("categories", categoryService.getAll());
+        //return "activity-list";
+        return getPaginated(1,"id", "asc", model);
     }
 
     @PostMapping("/add")
@@ -70,6 +84,74 @@ public class ActivityController {
         return "redirect:/admin/activity/list";
     }
 
+    @GetMapping("/list/page/{pageNo}")
+    public String getPaginated (
+            @PathVariable (value = "pageNo") int pageNo,
+            @RequestParam ("sortBy") String sortBy,
+            @RequestParam ("sortOrder") String sortOrder,
+            Model model) {
+        int pageSize = 5;
+
+        Page<Activity> activityPage = activityService.getPaginated(pageNo, pageSize, sortBy, sortOrder);
+        List<Activity> activities = activityPage.getContent();
+
+        model.addAttribute("currentPage", pageNo);
+        model.addAttribute("totalPages", activityPage.getTotalPages());
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortOrder", sortOrder);
+
+        if(sortOrder.equals("asc")) {
+            model.addAttribute("sortReverse", "desc");
+        } else {
+            model.addAttribute("sortReverse", "asc");
+        }
+
+        ActivityDTO activityDTO = new ActivityDTO(0);
+        model.addAttribute("activityDTO", activityDTO);
+        model.addAttribute("categories", categoryService.getAll());
+        model.addAttribute("activities", activities);
+        return "activity-list";
+    }
+
+    @GetMapping("/stat")
+    public String getAllWithStats (Model model) {
+
+        return getAllWithStatsPaginated(1, "id", "asc", model);
+    }
+
+    @GetMapping("/stat/page/{pageNo}")
+    public String getAllWithStatsPaginated (
+            @PathVariable(value="pageNo") int pageNo,
+            @RequestParam("sortBy") String sortBy,
+            @RequestParam("sortOrder") String sortOrder,
+            Model model) {
+            int pageSize = 7;
+        Page<Activity> activityPage = activityService.getPaginated(pageNo, pageSize, sortBy, sortOrder);
+        List<Activity> activities = activityPage.getContent();
+        List<ActivityDTO> activityDTOList = new LinkedList<>();
+        for(Activity a: activities) {
+            ActivityDTO temp = convertToDTO(a);
+            int totalTime = activityService.getTotalTime(a.getId());
+            temp.setTotalTimeHours(totalTime/60);
+            temp.setTotalTimeMin(totalTime%60);
+            temp.setUserCount(activityService.getUserCount(a.getId()));
+            activityDTOList.add(temp);
+        }
+
+        model.addAttribute("currentPage", pageNo);
+        model.addAttribute("totalPages", activityPage.getTotalPages());
+        model.addAttribute("sortBy", sortBy);
+        model.addAttribute("sortOrder", sortOrder);
+
+        if(sortOrder.equals("asc")) {
+            model.addAttribute("sortReverse", "desc");
+        } else {
+            model.addAttribute("sortReverse", "asc");
+        }
+        model.addAttribute("activities", activityDTOList);
+        return "usersactivity-all";
+    }
+
     private Optional<Activity> convertToActivity(ActivityDTO activityDTO) {
         Optional<Category> opt = categoryService.getById(activityDTO.getCategoryId());
         if(opt.isEmpty()) return Optional.empty();
@@ -78,6 +160,6 @@ public class ActivityController {
     }
 
     private ActivityDTO convertToDTO(Activity activity) {
-        return new ActivityDTO(activity.getId(), activity.getName(), activity.getCategory().getId());
+        return new ActivityDTO(activity.getId(), activity.getName(), activity.getCategory().getId(), activity.getCategory().getName());
     }
 }

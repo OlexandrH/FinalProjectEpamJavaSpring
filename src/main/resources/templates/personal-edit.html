@@ -20,10 +20,10 @@
             <label>Login</label>:&nbsp;<label th:text="${user.login}"></label>
             <br>
             <label>Password</label>:
-            <input th:field = "*{password}" type="text" minlength="3" maxlength="30" required/> <!-- add pattern -->
+            <input th:field = "*{password}" type="text" minlength="3" maxlength="30" pattern="[_0-9A-Za-z]{3,30}" required/>
             <br>
             <label>Name</label>:
-            <input th:field="*{name}" type = "text" minlength="3" maxlength="30" required/> <!-- add pattern -->
+            <input th:field="*{name}" type = "text" minlength="3" maxlength="30" pattern="[_.0-9A-Za-zА-Яа-яҐґІіЇіЄє\s]{2,30}" required/>
             <br>
 
             <button type="submit">Save</button>

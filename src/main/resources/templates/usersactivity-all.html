@@ -13,35 +13,35 @@
     <a th:href = "@{/admin/activity/stat}">Activities of Users</a>
 </div>
 <h4>
-    Activities of user
+    Users Activities
 </h4>
 <div>
     <table>
         <thead>
         <tr>
             <th>
-                <a th:href ="@{'/admin/usersactivity/list/' + ${userId} + '/page/' + ${currentPage} + '?sortBy=id&sortOrder=' + ${sortReverse}}">
+                <a th:href ="@{'/admin/activity/stat/page/' + ${currentPage} + '?sortBy=id&sortOrder=' + ${sortReverse}}">
                 ID
                 </a>
             </th>
             <th>
-                <a th:href ="@{'/admin/usersactivity/list/' + ${userId} + '/page/' + ${currentPage} + '?sortBy=activity&sortOrder=' + ${sortReverse}}">
+                <a th:href ="@{'/admin/activity/stat/page/' + ${currentPage} + '?sortBy=name&sortOrder=' + ${sortReverse}}">
                 Name
                 </a>
             </th>
             <th>
-                <a th:href ="@{'/admin/usersactivity/list/' + ${userId} + '/page/' + ${currentPage} + '?sortBy=category&sortOrder=' + ${sortReverse}}">
+                <a th:href ="@{'/admin/activity/stat/page/' + ${currentPage} + '?sortBy=category&sortOrder=' + ${sortReverse}}">
                 Category
                 </a>
             </th>
             <th>
-                <a th:href ="@{'/admin/usersactivity/list/' + ${userId} + '/page/' + ${currentPage} + '?sortBy=time&sortOrder=' + ${sortReverse}}">
+                <a th:href ="@{'/admin/activity/stat/page/' + ${currentPage} + '?sortBy=totalTime&sortOrder=' + ${sortReverse}}">
                 Time
                 </a>
             </th>
             <th>
-                <a th:href ="@{'/admin/usersactivity/list/' + ${userId} + '/page/' + ${currentPage} + '?sortBy=status&sortOrder=' + ${sortReverse}}">
-                Status
+                <a th:href ="@{'/admin/activity/stat/page/' + ${currentPage} + '?sortBy=userCount&sortOrder=' + ${sortReverse}}">
+                Users
                 </a>
             </th>
             <th>
@@ -49,37 +49,40 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each = "users_act : ${usersActivities}">
-            <td th:text = "${users_act.id}"></td>
-            <td th:text = "${users_act.activityName}"></td>
-            <td th:text = "${users_act.categoryName}"></td>
+        <tr th:each = "act : ${activities}">
+            <td th:text = "${act.id}"></td>
+            <td th:text = "${act.name}"></td>
+            <td th:text = "${act.categoryName}"></td>
 
             <td>
-                <label><span th:text="${users_act.timeHours}"></span></label>
+                <label><span th:text="${act.totalTimeHours}"></span></label>
                 <label> h </label>
-                <label><span th:text="${users_act.timeMin}"></span></label>
+                <label><span th:text="${act.totalTimeMin}"></span></label>
                 <label> m </label>
             </td>
 
-            <td th:text="${users_act.status}">
+            <td>
+                <label><span th:text="${act.userCount}"></span></label>
             </td>
             <td>
+                <!--
                 <form th:action = "@{/admin/usersactivity/accept/{id} (id=${users_act.id})}" method="post" style="display: inline;">
                     <button type="submit">Accept</button>
                 </form>
                 <form th:action = "@{/admin/usersactivity/delete/{id} (id=${users_act.id})}" method="post" style="display: inline;">
                     <button type="submit">Delete</button>
                 </form>
+                -->
             </td>
         </tr>
         </tbody>
     </table>
 </div>
 <div th:if = "${totalPages > 1}">
-    <span th:each = "i: ${#numbers.sequence(1, totalPages)}">
-        <a th:if = "${currentPage != i}" th:href="@{'/admin/usersactivity/list/'+ ${userId} + '/page/' + ${i} + '?sortBy=' + ${sortBy} + '&sortOrder=' + ${sortOrder}}">[[${i}]]</a>
-        <span th:unless="${currentPage != i}">[[${i}]]</span> &nbsp;&nbsp;
-    </span>
+        <span th:each = "i: ${#numbers.sequence(1, totalPages)}">
+            <a th:if = "${currentPage != i}" th:href="@{'/admin/activity/stat/page/' + ${i} + '?sortBy=' + ${sortBy} + '&sortOrder=' + ${sortOrder}}">[[${i}]]</a>
+            <span th:unless="${currentPage != i}">[[${i}]]</span> &nbsp;&nbsp;
+        </span>
 </div>
 </body>
 </html>

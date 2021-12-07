@@ -1,6 +1,10 @@
 package ua.oblikchasu.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ua.oblikchasu.repository.UserRepository;
 import ua.oblikchasu.model.User;
@@ -58,5 +62,16 @@ public class UserService {
         } else {
             return false;
         }
+    }
+
+    public Page<User> getPaginated (int pageNo, int pageSize, String sortBy, String sortOrder) {
+        Sort sort = Sort.by(sortBy).ascending();
+
+        if(sortOrder.equalsIgnoreCase(Sort.Direction.DESC.name())) {
+            sort = Sort.by(sortBy).descending();
+        }
+
+        Pageable pageable = PageRequest.of(pageNo - 1, pageSize, sort);
+        return userRepository.findAll(pageable);
     }
 }
