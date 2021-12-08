@@ -2,33 +2,51 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Add User</title>
+    <title>Register</title>
 </head>
 <body>
-    <div>
-        <a th:href = "@{/login}">Login</a>
-    </div>
+
+<div>
+    <a th:href="@{?lang=en}">ENG</a>
+    <a th:href="@{?lang=ua}">УКР</a>
+</div>
+<hr>
+<h4 th:text="#{label.registercap}">Register</h4>
 
 
-
-    <div>
-
-        <form th:action="@{/add}" th:object="${user}" method="post">
-            <label>Login</label>:
-            <input name="login" th:field= "*{login}" type = "text" minlength="3" maxlength="30" placeholder="Login" pattern="[_0-9A-Za-z]{3,30}" required/>
-            <br>
-            <label>Password</label>:
-            <input name="password" th:field= "*{password}" type = "text" minlength="3" maxlength="30" placeholder="Password" pattern="[_0-9A-Za-z]{3,30}" required/>
-            <br>
-            <label>Name</label>:
-            <input name = "name" th:field="*{name}" type = "text" minlength="3" maxlength="30" placeholder="Name" pattern="[_.0-9A-Za-zА-Яа-яҐґІіЇіЄє\s]{2,30}" required/>
-            <br>
-            <button type="submit">Save</button>
-        </form>
-        <table>
-
-        </table>
-    </div>
-
+<form th:action="@{/add}" th:object="${user}" method="post">
+    <table>
+        <tr>
+            <td>
+                <label th:text="#{label.login}">Login</label>:
+            </td>
+            <td>
+                <input name="login" th:field="*{login}" type="text" minlength="3" maxlength="30" placeholder="Login"
+                       pattern="[_0-9A-Za-z]{3,30}" required/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label th:text="#{label.password}">Password</label>:
+            </td>
+            <td>
+                <input name="password" th:field="*{password}" type="text" minlength="3" maxlength="30"
+                       placeholder="Password"
+                       pattern="[_0-9A-Za-z]{3,30}" required/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label th:text="#{label.name}">Name</label>:
+            </td>
+            <td>
+                <input name="name" th:field="*{name}" type="text" minlength="3" maxlength="30" placeholder="Name"
+                       pattern="[_.0-9A-Za-zА-Яа-яҐґІіЇіЄє\s]{2,30}" required/>
+            </td>
+        </tr>
+    </table>
+    <button type="submit" th:text="#{label.registercap}">Save</button>&nbsp;
+    <a th:href="@{/login}" th:text="#{label.sign}">Login</a>
+</form>
 </body>
 </html>

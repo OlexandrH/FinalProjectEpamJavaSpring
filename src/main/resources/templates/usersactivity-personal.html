@@ -3,46 +3,58 @@
 <head>
     <meta charset="UTF-8"/>
     <title>My page</title>
+    <style>
+        table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding: 5px;
+        }
+    </style>
 </head>
 <body>
 <div>
-    <a th:href = "@{/logout}">Logout</a>
+    <a th:href="@{'/personal/usersactivity/list/page/' + ${currentPage} + '?sortBy=' + ${sortBy} + '&sortOrder=' + ${sortOrder} + '&lang=en'}">ENG</a>
+    <a th:href="@{'/personal/usersactivity/list/page/' + ${currentPage} + '?sortBy=' + ${sortBy} + '&sortOrder=' + ${sortOrder} + '&lang=ua'}">УКР</a>
+</div>
+<hr>
+<div>
+    <a th:href = "@{/logout}" th:text="#{label.signout}">Logout</a>
 </div>
 <br>
 <div>
-    My data<br>
-    <label style="display: inline-block; width: 80px;">Login:</label><span th:text="${user.getLogin}"></span><br>
-    <label style="display: inline-block; width: 80px;">Name:</label><span th:text="${user.getName}"></span><br>
-    <a th:href = "@{/personal/user/edit}">Edit</a>
+    <h4 th:text="#{label.mydata}">My data</h4>
+    <label th:text="#{label.login}" style="display: inline-block; width: 80px;">Login:</label><span th:text="${user.getLogin}"></span><br>
+    <label th:text="#{label.name}" style="display: inline-block; width: 80px;">Name:</label><span th:text="${user.getName}"></span><br>
+    <a th:href = "@{/personal/user/edit}" th:text="#{label.edit}">Edit</a>
 </div>
 <br>
 <div>
-    My activities
+    <h4 th:text="#{label.myactivities}">My activities</h4>
     <table>
         <thead>
         <tr>
             <th>
-                <a th:href ="@{'/personal/usersactivity/list/page/' + ${currentPage} + '?sortBy=time&sortOrder=' + ${sortReverse}}">
+                <a th:href ="@{'/personal/usersactivity/list/page/' + ${currentPage} + '?sortBy=time&sortOrder=' + ${sortReverse}}" >
                 ID
                 </a>
             </th>
             <th>
-                <a th:href ="@{'/personal/usersactivity/list/page/' + ${currentPage} + '?sortBy=time&sortOrder=' + ${sortReverse}}">
+                <a th:href ="@{'/personal/usersactivity/list/page/' + ${currentPage} + '?sortBy=time&sortOrder=' + ${sortReverse}}" th:text="#{label.nameobj}">
                 Name
                 </a>
             </th>
             <th>
-                <a th:href ="@{'/personal/usersactivity/list/page/' + ${currentPage} + '?sortBy=time&sortOrder=' + ${sortReverse}}">
+                <a th:href ="@{'/personal/usersactivity/list/page/' + ${currentPage} + '?sortBy=time&sortOrder=' + ${sortReverse}}" th:text="#{label.category}">
                 Category
                 </a>
             </th>
             <th>
-                <a th:href ="@{'/personal/usersactivity/list/page/' + ${currentPage} + '?sortBy=time&sortOrder=' + ${sortReverse}}">
+                <a th:href ="@{'/personal/usersactivity/list/page/' + ${currentPage} + '?sortBy=time&sortOrder=' + ${sortReverse}}" th:text="#{label.time}">
                 Time
                 </a>
             </th>
             <th>
-                <a th:href ="@{'/personal/usersactivity/list/page/' + ${currentPage} + '?sortBy=time&sortOrder=' + ${sortReverse}}">
+                <a th:href ="@{'/personal/usersactivity/list/page/' + ${currentPage} + '?sortBy=time&sortOrder=' + ${sortReverse}}" th:text="#{label.status}">
                 Status
                 </a>
             </th>
@@ -83,7 +95,7 @@
 <br>
 <br>
 
-Add:
+<label th:text="#{label.add}">Add:</label>:
 <form th:action = "@{/personal/usersactivity/add/}"   method="post">
 
     <select name = "activityId" required>
@@ -91,12 +103,12 @@ Add:
         <option th:each = "act : ${activities}" th:value="${act.id}"><span th:text = "${act.name}"></span>(<span th:text="${act.category.name}"></span>)</option>
     </select>
 
-    <input type = "number" min="0" max="23" value="0" size="2" name="timeHours"/>
-    <label> h </label>
-    <input type = "number" min = "0" max="55" value="5" step="5" size="2" name ="timeMin"/>
+    <input type = "number" min="0" max="23" value="0" size="2" name="timeHours"/>&nbsp;
+    <label th:text="#{label.hour}"> h </label>&nbsp;
+    <input type = "number" min = "0" max="55" value="5" step="5" size="2" name ="timeMin"/>&nbsp;
     <label> m </label>
 
-    <button type="submit">Add</button>
+    <button type="submit" th:text="#{label.add}">Add</button>
 </form>
 
 </body>

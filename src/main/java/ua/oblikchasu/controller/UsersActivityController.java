@@ -1,5 +1,7 @@
 package ua.oblikchasu.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,6 +14,7 @@ import ua.oblikchasu.security.UserDetailsImpl;
 import ua.oblikchasu.service.ActivityService;
 import ua.oblikchasu.service.UserService;
 import ua.oblikchasu.service.UsersActivityService;
+import ua.oblikchasu.logger.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +23,7 @@ import java.util.Optional;
 @Controller
 public class UsersActivityController {
 
+    private final Logger logger = LoggerFactory.getLogger(UsersActivityController.class);
     private final UsersActivityService usersActivityService;
     private final UserService userService;
     private final ActivityService activityService;
@@ -31,12 +35,12 @@ public class UsersActivityController {
         this.activityService = activityService;
     }
 
-    @GetMapping("/admin/usersactivity/list")
+    @GetMapping("/admin/usersactivity/all")
     public String getAll(Model model) {
-        //List<UsersActivity> usersAct = usersActivityService.getAll()
+        List<UsersActivity> usersAct = usersActivityService.getAll();
         model.addAttribute("usersActivities", usersActivityService.getAll());
         model.addAttribute("usersActivityDTO", new UsersActivityDTO(0));
-        return "";
+        return "usersactivity-list";
     }
 
     @GetMapping("/admin/usersactivity/list/{id}")
@@ -82,9 +86,16 @@ public class UsersActivityController {
         Optional<UsersActivity> optUsersActivity = usersActivityService.getById(id);
         if(optUsersActivity.isPresent()) {
             userId = optUsersActivity.get().getUser().getId();
-            usersActivityService.deleteById(id);
-            return "redirect:/admin/usersactivity/list/" + userId;
+
+            if(usersActivityService.deleteById(id)){
+                logger.info(LogMsg.USERS_ACTIVITY_DELETED, id);
+                return "redirect:/admin/usersactivity/list/" + userId;
+            }
+            logger.error(LogMsg.USERS_ACTIVITY_DELETE_FAIL, id);
+            return "redirect:/error";
         }
+        logger.error(LogMsg.USERS_ACTIVITY_NOT_FOUND, id);
+        logger.error(LogMsg.USERS_ACTIVITY_DELETE_FAIL, id);
         return "redirect:/error";
     }
 
@@ -96,9 +107,16 @@ public class UsersActivityController {
             UsersActivity usersActivity = optUsersActivity.get();
             userId = usersActivity.getUser().getId();
             usersActivity.setStatus(UsersActivityStatus.ACCEPTED);
-            usersActivityService.update(usersActivity);
-            return "redirect:/admin/usersactivity/list/" + userId;
+
+            if(usersActivityService.update(usersActivity)){
+                logger.info(LogMsg.USERS_ACTIVITY_UPDATED, id, usersActivity.getStatus());
+                return "redirect:/admin/usersactivity/list/" + userId;
+            }
+            logger.error(LogMsg.USERS_ACTIVITY_UPDATE_FAIL, id);
+            return "redirect:/error";
         }
+        logger.error(LogMsg.USERS_ACTIVITY_UPDATE_FAIL, id);
+        logger.error(LogMsg.USERS_ACTIVITY_NOT_FOUND, id);
         return "redirect:/error";
     }
 
@@ -109,6 +127,8 @@ public class UsersActivityController {
         int id = user.getId();
         Optional<User> opt = userService.getById(user.getId());
         if (opt.isEmpty()) {
+            logger.error(LogMsg.USERS_ACTIVITY_GET_FAIL, id);
+            logger.error(LogMsg.USER_NOT_FOUND_ID, id);
             return "redirect:/error";
         }
         user = opt.get();
@@ -140,6 +160,8 @@ public class UsersActivityController {
         int id = user.getId();
         Optional<User> opt = userService.getById(user.getId());
         if (opt.isEmpty()) {
+            logger.error(LogMsg.USERS_ACTIVITY_GET_FAIL, id);
+            logger.error(LogMsg.USER_NOT_FOUND_ID, id);
             return "redirect:/error";
         }
         user = opt.get();
@@ -177,8 +199,12 @@ public class UsersActivityController {
         if(optUsersActivity.isPresent()) {
             UsersActivity usersActivity = optUsersActivity.get();
             usersActivity.setStatus(UsersActivityStatus.UNBOOKED);
-            usersActivityService.update(usersActivity);
-            return "redirect:/personal/usersactivity/list";
+            if(usersActivityService.update(usersActivity)) {
+                logger.info(LogMsg.USERS_ACTIVITY_UPDATED, id, usersActivity.getStatus());
+                return "redirect:/personal/usersactivity/list";
+            }
+            logger.error(LogMsg.USERS_ACTIVITY_UPDATE_FAIL, id);
+            return "redirect:/error";
         }
         return "redirect:/error";
     }
@@ -194,9 +220,11 @@ public class UsersActivityController {
         UsersActivityDTO usersActivityDTO = new UsersActivityDTO(0, userId, activityId, null, null, timeHours, timeMin, UsersActivityStatus.BOOKED);
         Optional<UsersActivity> optUsersActivity = convertToUsersActivity(usersActivityDTO);
         if(optUsersActivity.isPresent()) {
-            usersActivityService.add(optUsersActivity.get());
+            UsersActivity usersActivity = usersActivityService.add(optUsersActivity.get());
+            logger.info(LogMsg.USERS_ACTIVITY_ADDED, usersActivity.getId());
             return "redirect:/personal/usersactivity/list";
         }
+        logger.error(LogMsg.USERS_ACTIVITY_ADD_FAIL);
         return "redirect:/error";
     }
 

@@ -1,5 +1,7 @@
 package ua.oblikchasu.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -10,6 +12,7 @@ import ua.oblikchasu.model.Activity;
 import ua.oblikchasu.model.Category;
 import ua.oblikchasu.service.ActivityService;
 import ua.oblikchasu.service.CategoryService;
+import ua.oblikchasu.logger.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -18,7 +21,7 @@ import java.util.Optional;
 @RequestMapping("/admin/activity")
 @Controller
 public class ActivityController {
-
+    private final Logger logger = LoggerFactory.getLogger(ActivityController.class);
     private final ActivityService activityService;
     private final CategoryService categoryService;
 
@@ -41,11 +44,6 @@ public class ActivityController {
     @GetMapping("/list")
     public String getAll (Model model)
     {
-        //model.addAttribute("activities", activityService.getAll());
-        //ActivityDTO activityDTO = new ActivityDTO(0);
-        //model.addAttribute("activityDTO", activityDTO);
-        //model.addAttribute("categories", categoryService.getAll());
-        //return "activity-list";
         return getPaginated(1,"id", "asc", model);
     }
 
@@ -53,9 +51,11 @@ public class ActivityController {
     public String add (@ModelAttribute ActivityDTO activityDTO) {
         Optional<Activity> opt = convertToActivity(activityDTO);
         if(opt.isEmpty()) {
+            logger.info(LogMsg.ACTIVITY_ADD_FAIL);
             return "redirect:/error";
         }
         activityService.add(opt.get());
+        logger.info(LogMsg.ACTIVITY_ADDED, opt.get());
         return "redirect:/admin/activity/list";
     }
 
@@ -63,24 +63,34 @@ public class ActivityController {
     public String update (@ModelAttribute ActivityDTO activityDTO, @PathVariable int id) {
         Optional<Activity> optOldActivity = activityService.getById(id);
         Optional<Activity> optUpdatedActivity = convertToActivity(activityDTO);
-        if(optOldActivity.isEmpty() || optUpdatedActivity.isEmpty()) {
+        if(optOldActivity.isEmpty()) {
+            logger.error(LogMsg.ACTIVITY_NOT_FOUND, id);
             return "redirect:/error";
         }
+        if(optUpdatedActivity.isEmpty()) {
+            logger.error(LogMsg.ACTIVITY_UPDATE_FAIL, id);
+            return "redirect:/error";
+        }
+
         Activity oldActivity = optOldActivity.get();
         Activity updatedActivity = optUpdatedActivity.get();
         oldActivity.setName(updatedActivity.getName());
         oldActivity.setCategory(updatedActivity.getCategory());
         if(!activityService.update(oldActivity)) {
+            logger.error(LogMsg.ACTIVITY_UPDATE_FAIL, id);
             return "redirect:/error";
         }
+        logger.info(LogMsg.ACTIVITY_UPDATED, oldActivity);
         return "redirect:/admin/activity/list";
     }
 
     @PostMapping("/delete/{id}")
     public String delete (@PathVariable int id) {
         if(!activityService.deleteById(id)) {
+            logger.error(LogMsg.ACTIVITY_DELETE_FAIL, id);
             return "redirect:/error";
         }
+        logger.info(LogMsg.ACTIVITY_DELETED, id);
         return "redirect:/admin/activity/list";
     }
 

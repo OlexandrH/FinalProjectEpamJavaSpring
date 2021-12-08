@@ -3,18 +3,29 @@
 <head>
     <meta charset="UTF-8"/>
     <title>Category List</title>
+    <style>
+        table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding: 5px;
+        }
+    </style>
 </head>
 <body>
 <div>
-    <a th:href = "@{/logout}">Logout</a>
-    <a th:href = "@{/admin/user/list}">Users</a>
-    <a th:href = "@{/admin/category/list}">Categories</a>
-    <a th:href = "@{/admin/activity/list}">Activities</a>
-    <a th:href = "@{/admin/activity/stat}">Activities of Users</a>
+    <a th:href = "@{'/admin/category/list/page/' + ${currentPage} + '?sortBy=' + ${sortBy} + '&sortOrder=' + ${sortOrder} + '&lang=en'}">ENG</a>
+    <a th:href = "@{'/admin/category/list/page/' + ${currentPage} + '?sortBy=' + ${sortBy} + '&sortOrder=' + ${sortOrder} + '&lang=ua'}">УКР</a>
 </div>
-
-
-
+<hr>
+<div>
+    <a th:href="@{/logout}" th:text="#{label.signout}">Logout</a>
+    <a th:href="@{/admin/user/list}" th:text="#{label.users}">Users</a>
+    <a th:href="@{/admin/category/list}" th:text="#{label.categories}">Categories</a>
+    <a th:href="@{/admin/activity/list}" th:text="#{label.activities}">Activities</a>
+    <a th:href="@{/admin/activity/stat}" th:text="#{label.usersactivities}">Activities of Users</a>
+</div>
+<h4 th:text="#{label.categories}">
+</h4>
 <div>
     <table>
         <thead>
@@ -25,14 +36,14 @@
                 </a>
             </th>
             <th>
-                <a th:href ="@{'/admin/category/list/page/' + ${currentPage} + '?sortBy=name&sortOrder=' + ${sortReverse}}">
+                <a th:href ="@{'/admin/category/list/page/' + ${currentPage} + '?sortBy=name&sortOrder=' + ${sortReverse}}" th:text="#{label.nameobj}">
                 Name
                 </a>
             </th>
             <th>
 
             </th>
-            <th>
+            <th th:text="#{label.edit}">
                 Edit
             </th>
 
@@ -47,13 +58,13 @@
             <td>
                 <form th:action = "@{/admin/category/edit/{id} (id=${cat.id})}" method="post" th:object="${category}" style="display: inline;">
                     <input type = "text" name="name" th:value="${cat.name}"  minlength="2" maxlength="30" pattern="[.0-9A-Za-zА-Яа-яҐґІіЇіЄє\s]{3,30}" required/>
-                    <button type="submit">Save</button>&nbsp;
-                    <button type="reset">Restore</button>
+                    <button type="submit" th:text="#{label.save}">Save</button>&nbsp;
+                    <button type="reset" th:text="#{label.restore}">Restore</button>
                 </form>
             </td>
             <td>
                 <form th:action = "@{/admin/category/delete/{id} (id=${cat.id})}" method="post" style="display: inline;">
-                    &nbsp;<button type="submit">Delete</button>
+                    &nbsp;<button type="submit" th:text="#{label.delete}" >Delete</button>
                 </form>
             </td>
         </tr>
@@ -67,11 +78,10 @@
         </span>
 </div>
 <br>
-<br>
-Add:
+<span th:text="#{label.add}">Add:</span>:
 <form th:action = "@{/admin/category/add}" th:object="${category}" method="post">
     <input type="text" th:field="*{name}" placeholder="Activity name" minlength="3" maxlength="30" pattern="[.0-9A-Za-zА-Яа-яҐґІіЇіЄє\s]{3,30}" required/>
-    <button type="submit">Save</button>
+    <button type="submit" th:text="#{label.save}" >Save</button>
 </form>
 </body>
 </html>

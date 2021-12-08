@@ -5,24 +5,38 @@
     <title>Login</title>
 </head>
 <body>
-    <div>
 
-    </div>
+<div>
+    <a th:href = "@{?lang=en}">ENG</a>
+    <a th:href = "@{?lang=ua}">УКР</a>
+</div>
+<hr>
 
-    <div>
+<h4 th:text="#{label.sign}"></h4>
 
-        <form th:action="login" method="post">
+        <form th:action="login" method="post" >
+            <table>
+            <tr>
+                <td>
+                    <label th:text="#{label.login}">Login</label>:
+                </td>
+                <td>
+                    <input name = "username" type="text" minlength="3" maxlength="30" placeholder="Login" required/>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <label th:text="#{label.password}">Password</label>:
+                </td>
+                <td>
+                    <input name="password" type="password" minlength="3" maxlength="30" placeholder="Password" required/>
+                </td>
+            </tr>
+            </table>
             <br>
-            <label>Login</label>:
-            <input name = "username" type="text" minlength="3" maxlength="30" required/>
-            <br>
-            <label>Password</label>:
-            <input name="password" type="password" minlength="3" maxlength="30" required/>
-            <br>
-            <button type="submit">Sign-in</button>
+            <button type="submit" th:text="#{label.sign}"></button> &nbsp;
+            <a th:href="@{/add}" th:text="#{label.registercap}">Register</a>
         </form>
-        <a th:href="@{/add}">Register</a>
-    </div>
-
 </body>
 </html>

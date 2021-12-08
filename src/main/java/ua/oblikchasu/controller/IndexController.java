@@ -21,4 +21,9 @@ public class IndexController {
     public String logoutPage() {
         return "index";
     }
+
+//    @RequestMapping("/error")
+//    public String errorPage() {
+//        return "error";
+//    }
 }

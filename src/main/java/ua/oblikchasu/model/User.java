@@ -17,7 +17,7 @@ public class User {
     @Column(name="login", updatable = false , unique = true, nullable = false, length = 32)
     private String login;
 
-    @Column(name="pass", nullable = false, length = 32)//64!
+    @Column(name="pass", nullable = false, length = 64)
     private String password;
 
     @Column(name="name", nullable = false, length = 32)
@@ -87,5 +87,15 @@ public class User {
 
     public void setPassword (String password) {
         this.password = password;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", login='" + login + '\'' +
+                ", name='" + name + '\'' +
+                ", role=" + role +
+                '}';
     }
 }

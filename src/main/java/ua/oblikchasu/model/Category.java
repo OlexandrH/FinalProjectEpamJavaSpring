@@ -17,9 +17,6 @@ public class Category {
     @Column(name="name", unique = true, nullable = false, length = 32)
     private String name;
 
-  //  @OneToMany(mappedBy="category")
-  //  List<Activity> activities;
-
     public Category(@RequestParam("cat_id")int id) {
         this.id = id;
     }
@@ -60,7 +57,4 @@ public class Category {
                 '}';
     }
 
-    //    public List<Activity> getActivities() {
-//        return activities;
-//    }
 }

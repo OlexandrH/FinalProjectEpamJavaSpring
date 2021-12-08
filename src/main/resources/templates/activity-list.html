@@ -3,16 +3,29 @@
 <head>
     <meta charset="UTF-8"/>
     <title>Activity List</title>
+    <style>
+        table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding: 5px;
+        }
+    </style>
 </head>
 <body>
 <div>
-    <a th:href = "@{/logout}">Logout</a>
-    <a th:href = "@{/admin/user/list}">Users</a>
-    <a th:href = "@{/admin/category/list}">Categories</a>
-    <a th:href = "@{/admin/activity/list}">Activities</a>
-    <a th:href = "@{/admin/activity/stat}">Activities of Users</a>
+    <a th:href = "@{'/admin/activity/list/page/' + ${currentPage} + '?sortBy=' + ${sortBy} + '&sortOrder=' + ${sortOrder} + '&lang=en'}">ENG</a>
+    <a th:href = "@{'/admin/activity/list/page/' + ${currentPage} + '?sortBy=' + ${sortBy} + '&sortOrder=' + ${sortOrder} + '&lang=ua'}">УКР</a>
 </div>
-
+<hr>
+<div>
+    <a th:href="@{/logout}" th:text="#{label.signout}">Logout</a>
+    <a th:href="@{/admin/user/list}" th:text="#{label.users}">Users</a>
+    <a th:href="@{/admin/category/list}" th:text="#{label.categories}">Categories</a>
+    <a th:href="@{/admin/activity/list}" th:text="#{label.activities}">Activities</a>
+    <a th:href="@{/admin/activity/stat}" th:text="#{label.usersactivities}">Activities of Users</a>
+</div>
+<h4 th:text="#{label.activities}">
+</h4>
 <div>
     <table>
         <thead>
@@ -23,16 +36,16 @@
                 </a>
             </th>
             <th>
-                <a th:href ="@{'/admin/activity/list/page/' + ${currentPage} + '?sortBy=name&sortOrder=' + ${sortReverse}}">
+                <a th:href ="@{'/admin/activity/list/page/' + ${currentPage} + '?sortBy=name&sortOrder=' + ${sortReverse}}" th:text="#{label.nameobj}">
                 Name
                 </a>
             </th>
             <th>
-                <a th:href ="@{'/admin/activity/list/page/' + ${currentPage} + '?sortBy=category&sortOrder=' + ${sortReverse}}">
+                <a th:href ="@{'/admin/activity/list/page/' + ${currentPage} + '?sortBy=category&sortOrder=' + ${sortReverse}}" th:text="#{label.category}">
                 Category
                 </a>
             </th>
-            <th>
+            <th th:text="#{label.edit}">
                 Edit
             </th>
 
@@ -53,36 +66,34 @@
                     </select>
 
 
-                    <button type="submit">Save</button>&nbsp;
-                    <button type="reset">Restore</button>
+                    <button type="submit" th:text="#{label.save}" >Save</button>&nbsp;
+                    <button type="reset" th:text="#{label.restore}">Restore</button>
                 </form>
             </td>
             <td>
                 <form th:action = "@{/admin/activity/delete/{id} (id=${act.id})}" method="post" style="display: inline;">
-                    &nbsp;<button type="submit">Delete</button>
+                    &nbsp;<button type="submit" th:text="#{label.delete}" >Delete</button>
                 </form>
             </td>
         </tr>
         </tbody>
     </table>
 </div>
-<br>
 <div th:if = "${totalPages > 1}">
         <span th:each = "i: ${#numbers.sequence(1, totalPages)}">
             <a th:if = "${currentPage != i}" th:href="@{'/admin/activity/list/page/' + ${i} + '?sortBy=' + ${sortBy} + '&sortOrder=' + ${sortOrder}}">[[${i}]]</a>
             <span th:unless="${currentPage != i}">[[${i}]]</span> &nbsp;&nbsp;
         </span>
 </div>
-
 <br>
-Add:
+<span th:text="#{label.add}">Add:</span>:
 <form th:action = "@{/admin/activity/add}" th:object="${activityDTO}"  method="post">
     <input type="text" th:field="*{name}" placeholder="Activity name" minlength="3" maxlength="30" pattern="[.0-9A-Za-zА-Яа-яҐґІіЇіЄє\s]{3,30}" required/>
     <select th:field="*{categoryId}" required>
         <option value="0" disabled selected hidden>Select category</option>
         <option th:each = "cat : ${categories}" th:value="${cat.id}"><span th:text = "${cat.name}"></span></option>
     </select>
-    <button type="submit">Save</button>
+    <button type="submit" th:text="#{label.save}">Save</button>
 </form>
 
 

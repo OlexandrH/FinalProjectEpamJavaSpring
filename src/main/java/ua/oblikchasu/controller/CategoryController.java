@@ -1,5 +1,7 @@
 package ua.oblikchasu.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -7,14 +9,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.oblikchasu.model.Category;
 import ua.oblikchasu.service.CategoryService;
-
+import ua.oblikchasu.logger.*;
 import java.util.List;
 import java.util.Optional;
 
 @RequestMapping("/admin/category")
 @Controller
 public class CategoryController {
-
+    private final Logger logger = LoggerFactory.getLogger(CategoryController.class);
     private final CategoryService categoryService;
 
     @Autowired
@@ -24,16 +26,19 @@ public class CategoryController {
 
     @GetMapping("/list")
     public String getAll (Model model) {
-        //model.addAttribute("categories", categoryService.getAll());
         Category categoryTemplate = new Category(0);
         model.addAttribute("category", categoryTemplate);
-        //return "cat-list";
         return getPaginated(1, "id", "asc", model);
     }
 
     @PostMapping("/add")
     public String add (@ModelAttribute Category category) {
+        if(category == null) {
+            logger.error(LogMsg.ACTIVITY_CATEGORY_ADD_FAIL);
+            return "redirect:/error";
+        }
         categoryService.add(category);
+        logger.info(LogMsg.ACTIVITY_CATEGORY_ADDED, category);
         return "redirect:/admin/category/list";
     }
 
@@ -42,22 +47,27 @@ public class CategoryController {
     public String update (@PathVariable int id, @ModelAttribute Category category) {
         Optional<Category> opt = categoryService.getById(id);
         if(opt.isEmpty()) {
+            logger.error(LogMsg.ACTIVITY_CATEGORY_NOT_FOUND, id);
             return "redirect:/error";
         }
         Category oldCategory = opt.get();
         oldCategory.setName(category.getName());
 
         if(!categoryService.update(oldCategory)) {
+            logger.error(LogMsg.ACTIVITY_CATEGORY_UPDATE_FAIL, oldCategory);
             return "redirect:/error";
         }
+        logger.info(LogMsg.ACTIVITY_CATEGORY_UPDATED, oldCategory);
         return "redirect:/admin/category/list";
     }
 
     @PostMapping("/delete/{id}")
     public String delete (@PathVariable int id) {
         if(!categoryService.deleteById(id)) {
+            logger.error(LogMsg.ACTIVITY_CATEGORY_DELETE_FAIL, id);
             return "redirect:/error";
         }
+        logger.info(LogMsg.ACTIVITY_CATEGORY_DELETED, id);
         return "redirect:/admin/category/list";
     }
 

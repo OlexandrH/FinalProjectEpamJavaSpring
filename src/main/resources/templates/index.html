@@ -5,6 +5,15 @@
     <title>Start page</title>
 </head>
 <body>
-    <a th:href="@{/login}">Sign-in</a>
+<div>
+    <a th:href = "@{?lang=en}">ENG</a>
+    <a th:href = "@{?lang=ua}">УКР</a>
+</div>
+    <hr>
+<h3 th:text ="#{label.welcome}"></h3>
+<span th:text="#{label.please}">Please,</span>,&nbsp;
+<a th:href="@{/login}" th:text="#{label.signin}">Sign-in</a>&nbsp;
+<span th:text="#{label.or}">or</span>&nbsp;
+<a th:href="@{/add}" th:text="#{label.register}">Register</a>
 </body>
 </html>

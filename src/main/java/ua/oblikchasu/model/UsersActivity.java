@@ -79,4 +79,26 @@ public class UsersActivity {
     public void setActivity(Activity activity) {
         this.activity = activity;
     }
+
+    @Override
+    public String toString() {
+
+        StringBuilder result = new StringBuilder();
+                result.append("UsersActivity{");
+                result.append("id=");
+                result.append(id);
+
+                if(user != null) {
+                    result.append(", user=");
+                    result.append(user.getLogin());
+                }
+                if(activity != null) {
+                    result.append(", activity=");
+                    result.append(activity.getName());
+                }
+                result.append( ", time=");
+                result.append(time);
+                result.append('}');
+                return result.toString();
+    }
 }

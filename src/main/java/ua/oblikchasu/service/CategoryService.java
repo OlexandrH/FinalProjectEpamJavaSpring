@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ua.oblikchasu.repository.CategoryRepository;
 import ua.oblikchasu.model.Category;
+import ua.oblikchasu.logger.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,10 +25,6 @@ public class CategoryService {
     public List<Category> getAll () {
         return categoryRepository.findAll();
     }
-
-//    public List<Category> getSortedPortion(String sortBy, int from, int amount, boolean order) {
-//        return categoryDAO.findSortedPortion(sortBy, from, amount, order);
-//    }
 
     public Optional<Category> getById (int id) {
         return categoryRepository.findById(id);

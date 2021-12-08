@@ -3,16 +3,28 @@
 <head>
     <meta charset="UTF-8"/>
     <title>Activities List</title>
+    <style>
+        table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding: 5px;
+        }
+    </style>
 </head>
 <body>
 <div>
-    <a th:href = "@{/logout}">Logout</a>
-    <a th:href = "@{/admin/user/list}">Users</a>
-    <a th:href = "@{/admin/category/list}">Categories</a>
-    <a th:href = "@{/admin/activity/list}">Activities</a>
-    <a th:href = "@{/admin/activity/stat}">Activities of Users</a>
+    <a th:href = "@{'/admin/usersactivity/list/'+ ${userId} + '/page/' + ${currentPage} + '?sortBy=' + ${sortBy} + '&sortOrder=' + ${sortOrder} + '&lang=en'}">ENG</a>
+    <a th:href = "@{'/admin/usersactivity/list/'+ ${userId} + '/page/' + ${currentPage} + '?sortBy=' + ${sortBy} + '&sortOrder=' + ${sortOrder} + '&lang=ua'}">УКР</a>
 </div>
-<h4>
+<hr>
+<div>
+    <a th:href="@{/logout}" th:text="#{label.signout}">Logout</a>
+    <a th:href="@{/admin/user/list}" th:text="#{label.users}">Users</a>
+    <a th:href="@{/admin/category/list}" th:text="#{label.categories}">Categories</a>
+    <a th:href="@{/admin/activity/list}" th:text="#{label.activities}">Activities</a>
+    <a th:href="@{/admin/activity/stat}" th:text="#{label.usersactivities}">Activities of Users</a>
+</div>
+<h4 th:text="#{label.activitiesofuser}">
     Activities of user
 </h4>
 <div>
@@ -25,22 +37,22 @@
                 </a>
             </th>
             <th>
-                <a th:href ="@{'/admin/usersactivity/list/' + ${userId} + '/page/' + ${currentPage} + '?sortBy=activity&sortOrder=' + ${sortReverse}}">
+                <a th:href ="@{'/admin/usersactivity/list/' + ${userId} + '/page/' + ${currentPage} + '?sortBy=activity&sortOrder=' + ${sortReverse}}" th:text="#{label.nameobj}">
                 Name
                 </a>
             </th>
             <th>
-                <a th:href ="@{'/admin/usersactivity/list/' + ${userId} + '/page/' + ${currentPage} + '?sortBy=category&sortOrder=' + ${sortReverse}}">
+                <a th:href ="@{'/admin/usersactivity/list/' + ${userId} + '/page/' + ${currentPage} + '?sortBy=category&sortOrder=' + ${sortReverse}}" th:text="#{label.category}">
                 Category
                 </a>
             </th>
             <th>
-                <a th:href ="@{'/admin/usersactivity/list/' + ${userId} + '/page/' + ${currentPage} + '?sortBy=time&sortOrder=' + ${sortReverse}}">
+                <a th:href ="@{'/admin/usersactivity/list/' + ${userId} + '/page/' + ${currentPage} + '?sortBy=time&sortOrder=' + ${sortReverse}}" th:text="#{label.time}">
                 Time
                 </a>
             </th>
             <th>
-                <a th:href ="@{'/admin/usersactivity/list/' + ${userId} + '/page/' + ${currentPage} + '?sortBy=status&sortOrder=' + ${sortReverse}}">
+                <a th:href ="@{'/admin/usersactivity/list/' + ${userId} + '/page/' + ${currentPage} + '?sortBy=status&sortOrder=' + ${sortReverse}}" th:text="#{label.status}">
                 Status
                 </a>
             </th>
@@ -56,19 +68,19 @@
 
             <td>
                 <label><span th:text="${users_act.timeHours}"></span></label>
-                <label> h </label>
+                &nbsp;<label th:text="#{label.hour}"> h </label>&nbsp;
                 <label><span th:text="${users_act.timeMin}"></span></label>
-                <label> m </label>
+                &nbsp;<label th:text="#{label.min}"> m </label>
             </td>
 
             <td th:text="${users_act.status}">
             </td>
             <td>
                 <form th:action = "@{/admin/usersactivity/accept/{id} (id=${users_act.id})}" method="post" style="display: inline;">
-                    <button type="submit">Accept</button>
+                    <button type="submit" th:text="#{label.accept}">Accept</button>
                 </form>
                 <form th:action = "@{/admin/usersactivity/delete/{id} (id=${users_act.id})}" method="post" style="display: inline;">
-                    <button type="submit">Delete</button>
+                    <button type="submit" th:text="#{label.delete}">Delete</button>
                 </form>
             </td>
         </tr>

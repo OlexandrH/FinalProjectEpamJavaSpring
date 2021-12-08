@@ -3,71 +3,93 @@
 <head>
     <meta charset="UTF-8"/>
     <title>User List</title>
+    <style>
+        table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+        padding: 5px;
+        }
+    </style>
 </head>
 <body>
-    <div>
-        <a th:href = "@{/logout}">Logout</a>
-        <a th:href = "@{/admin/user/list}">Users</a>
-        <a th:href = "@{/admin/category/list}">Categories</a>
-        <a th:href = "@{/admin/activity/list}">Activities</a>
-        <a th:href = "@{/admin/activity/stat}">Activities of Users</a>
-    </div>
-
-
-
-    <div>
-        <table>
-            <thead>
-            <tr>
-                <th>
-                    <a th:href ="@{'/admin/user/list/page/' + ${currentPage} + '?sortBy=id&sortOrder=' + ${sortReverse}}">
+<div>
+    <a th:href="@{'/admin/user/list/page/' + ${currentPage} + '?sortBy=' + ${sortBy} + '&sortOrder=' + ${sortOrder} + '&lang=en'}">ENG</a>
+    <a th:href="@{'/admin/user/list/page/' + ${currentPage} + '?sortBy=' + ${sortBy} + '&sortOrder=' + ${sortOrder} + '&lang=ua'}">УКР</a>
+</div>
+<hr>
+<div>
+    <a th:href="@{/logout}" th:text="#{label.signout}">Logout</a>
+    <a th:href="@{/admin/user/list}" th:text="#{label.users}">Users</a>
+    <a th:href="@{/admin/category/list}" th:text="#{label.categories}">Categories</a>
+    <a th:href="@{/admin/activity/list}" th:text="#{label.activities}">Activities</a>
+    <a th:href="@{/admin/activity/stat}" th:text="#{label.usersactivities}">Activities of Users</a>
+</div>
+<h4 th:text="#{label.users}">
+</h4>
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>
+                <a th:href="@{'/admin/user/list/page/' + ${currentPage} + '?sortBy=id&sortOrder=' + ${sortReverse}}">
                     ID
-                    </a>
-                </th>
-                <th>
-                    <a th:href ="@{'/admin/user/list/page/' + ${currentPage} + '?sortBy=login&sortOrder=' + ${sortReverse}}">
+                </a>
+            </th>
+            <th>
+                <a th:href="@{'/admin/user/list/page/' + ${currentPage} + '?sortBy=login&sortOrder=' + ${sortReverse}}"
+                   th:text="#{label.login}">
                     Login
-                    </a>
-                </th>
-                <th>
-                    <a th:href ="@{'/admin/user/list/page/' + ${currentPage} + '?sortBy=name&sortOrder=' + ${sortReverse}}">
+                </a>
+            </th>
+            <th>
+                <a th:href="@{'/admin/user/list/page/' + ${currentPage} + '?sortBy=name&sortOrder=' + ${sortReverse}}"
+                   th:text="#{label.name}">
                     Name
-                    </a>
-                </th>
-                <th>
-                    Role
-                </th>
-                <th>
+                </a>
+            </th>
+            <th th:text="#{label.role}">
+                Role
+            </th>
+            <th th:text="#{label.activities}">
+            </th>
+            <th>
+            </th>
+            <th>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.login}"></td>
+            <td th:text="${user.name}"></td>
+            <td th:text="${user.role}"></td>
+            <td>
+                <a th:href="@{/admin/usersactivity/list/{id} (id=${user.id})}" th:text="#{label.show}">Show
+                    activities </a>
+            </td>
+            <td>
+                <form th:action="@{/admin/user/edit/{id} (id=${user.id})}" method="get" style="display: inline;">
+                    <button type="submit" th:text="#{label.edit}">Edit</button>&nbsp;
+                </form>
+            </td>
+            <td>
+                <form th:action="@{/admin/user/delete/{id} (id=${user.id})}" method="post" style="display: inline;">
+                    <button type="submit" th:text="#{label.delete}">Delete</button>
+                </form>
 
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each = "user : ${users}">
-                <td th:text = "${user.id}"></td>
-                <td th:text = "${user.login}"></td>
-                <td th:text = "${user.name}"></td>
-                <td th:text = "${user.role}"></td>
-                <td>
-                    <form th:action = "@{/admin/user/edit/{id} (id=${user.id})}" method="get" style="display: inline;">
-                        <button type="submit">Edit</button>&nbsp;
-                    </form>
-                </td>
-                <td>
-                    <form th:action = "@{/admin/user/delete/{id} (id=${user.id})}" method="post" style="display: inline;">
-                        <button type="submit">Delete</button>
-                    </form>
-                    <a th:href = "@{/admin/usersactivity/list/{id} (id=${user.id})}">Show activities </a>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <div th:if = "${totalPages > 1}">
-        <span th:each = "i: ${#numbers.sequence(1, totalPages)}">
-            <a th:if = "${currentPage != i}" th:href="@{'/admin/user/list/page/' + ${i} + '?sortBy=' + ${sortBy} + '&sortOrder=' + ${sortOrder}}">[[${i}]]</a>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:if="${totalPages > 1}">
+        <span th:each="i: ${#numbers.sequence(1, totalPages)}">
+            <a th:if="${currentPage != i}"
+               th:href="@{'/admin/user/list/page/' + ${i} + '?sortBy=' + ${sortBy} + '&sortOrder=' + ${sortOrder}}">[[${i}]]</a>
             <span th:unless="${currentPage != i}">[[${i}]]</span> &nbsp;&nbsp;
         </span>
-    </div>
+</div>
 </body>
 </html>
